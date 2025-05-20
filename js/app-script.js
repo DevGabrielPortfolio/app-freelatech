@@ -197,34 +197,57 @@ const newDescription = prompt('Edite a descrição da tarefa: ', taskItem.queryS
 }
 
 const excluirTarefa = (button) => {
-if (confirm('Deseja realmente excluir esta tarefa?')) {
-    const taskItem = button.closest('.task-item');
-    const taskName = taskItem.querySelector('h3').textContent;
+    // Faço a confirmação de exclusão para o usuário
+    if (confirm('Deseja realmente excluir esta tarefa?')) {
+        // pego o elemento pai com a classe task-item
+        const taskItem = button.closest('.task-item');
+        // pego o valor do h3 dentro do elemento pai
+        const taskName = taskItem.querySelector('h3').textContent;
 
-    let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
-    let tarefasLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+        // pego o array de tarefas do localStorage
+        let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+        // Pego o array de tarefas ecluídas de dentro do localStorage
+        let tarefasLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
 
-    // Encontra a tarefa e move para a lixeira
-    const tarefaIndex = tarefas.findIndex(t => t.nome === taskName);
+        // Encontro a tarefa que vai ser excluída
+        const tarefaIndex = tarefas.findIndex(t => t.nome === taskName);
 
-    if (tarefaIndex !== -1) {
-        // Remove a tarefa da lista de tarefas ativas
-        const tarefaExcluida = tarefas.splice(tarefaIndex, 1)[0];
+        // se essa tarefa for encontrada
+        if (tarefaIndex !== -1) {
+            // Removo a tarefa da lista de tarefas incial
+            const tarefaExcluida = tarefas.splice(tarefaIndex, 1)[0];
 
-        // Adiciona a tarefa à lixeira
-        tarefasLixeira.push(tarefaExcluida);
+            // Coloco a tarefa que foi removida dentro da lista de tarefas excluídas
+            tarefasLixeira.push(tarefaExcluida);
 
-        // Atualiza o localStorage
-        localStorage.setItem('tarefas', JSON.stringify(tarefas));
-        localStorage.setItem('tarefasLixeira', JSON.stringify(tarefasLixeira));
+            // Atualiza o localStorage co as novas tarefas
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+            localStorage.setItem('tarefasLixeira', JSON.stringify(tarefasLixeira));
 
-        // Atualiza a interface de tarefas
-        taskItem.remove();
+            // atualizo a interface
+            taskItem.remove();
 
-        alert('Tarefa movida para a lixeira.');
+            // retorno para o usuário
+            alert('Tarefa movida para a lixeira.');
+        }
     }
-}
 };
+
+// const excluirTarefa = (button) =>{
+//     if (confirm('Deseja realmente exluir esta tarefa?')){
+//         const taskItem = button.closest('.task-item');
+//         const taskName = taskItem.querySelector('h3').textContent;
+
+//         let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+
+//         tarefas = tarefas.filter(t => t.nome !== taskName);
+//         localStorage.setItem('tarefas', JSON.stringify(tarefas));
+
+//         taskItem.remove();
+
+//         alert('Tarefa Excluída.');
+//     }
+// }
 
 
 
@@ -346,13 +369,6 @@ tarefas.forEach(tarefa => taskList.appendChild(tarefa));
 // });
 };
 
-
-document.querySelector('#lixeiraBtn').addEventListener('click', function () {
-const tarefasLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
-console.log(tarefasLixeira);
-});
-
-
 // document.querySelector('#ordenarRecentesBtn').addEventListener('click', function () {
 //     ordenarTarefas('recentes');
 // });
@@ -362,5 +378,10 @@ console.log(tarefasLixeira);
 // });
 
 
+// const mostrarTarefasExcluidas = () =>{
 
+// }
 
+const restaurarTarefa = (tarefaExcluida) =>{
+
+}

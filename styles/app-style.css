@@ -145,6 +145,10 @@
     font-weight: bold;
     text-transform: uppercase;
   }
+
+  #lixeiraBtn{
+    background-color: #ff4444;
+  }
   
   .task-form button:hover {
     background-color: #88dd22;
