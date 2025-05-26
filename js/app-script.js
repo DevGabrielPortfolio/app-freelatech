@@ -31,180 +31,180 @@ document.addEventListener('DOMContentLoaded', definirSaudacao);
 
 // Carregar tarefas do localStorange ao iniciar
 const carregarTarefas = () => {
-const taskList = document.querySelector('#taskList');
-const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+    const taskList = document.querySelector('#taskList');
+    const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
 
-taskList.innerHTML = ''; // Limpa a lista atual antes de adicionar novamente
+    taskList.innerHTML = ''; // Limpa a lista atual antes de adicionar novamente
 
-tarefas.forEach(tarefa => {
-    const taskItem = document.createElement('div');
-    taskItem.classList.add('task-item');
-    if (tarefa.concluida) {
-        taskItem.classList.add('concluida');
-    }
-    taskItem.innerHTML = tarefa.html;
-    taskList.appendChild(taskItem);
+    tarefas.forEach(tarefa => {
+        const taskItem = document.createElement('div');
+        taskItem.classList.add('task-item');
+        if (tarefa.concluida) {
+            taskItem.classList.add('concluida');
+        }
+        taskItem.innerHTML = tarefa.html;
+        taskList.appendChild(taskItem);
 
-    // Adicionando event listeners aos botões da tarefa
-    taskItem.querySelector('.complete-btn').addEventListener('click', function () {
-        marcarComoConcluida(this);
+        // Adicionando event listeners aos botões da tarefa
+        taskItem.querySelector('.complete-btn').addEventListener('click', function () {
+            marcarComoConcluida(this);
+        });
+        taskItem.querySelector('.edit-btn').addEventListener('click', function () {
+            editarTarefas(this);
+        });
+        taskItem.querySelector('.delete-btn').addEventListener('click', function () {
+            excluirTarefa(this);
+        });
     });
-    taskItem.querySelector('.edit-btn').addEventListener('click', function () {
-        editarTarefas(this);
-    });
-    taskItem.querySelector('.delete-btn').addEventListener('click', function () {
-        excluirTarefa(this);
-    });
-});
 };
 
 // Função para adicionar uma nova tarefa
 const adicionarTarefa = () =>{
-const taskName = document.querySelector('#taskName').value;
-const taskDescription = document.querySelector('#taskDescription').value;
-const taskDate = document.querySelector('#taskDate').value;
-const taskTime = document.querySelector('#taskTime').value;
+    const taskName = document.querySelector('#taskName').value;
+    const taskDescription = document.querySelector('#taskDescription').value;
+    const taskDate = document.querySelector('#taskDate').value;
+    const taskTime = document.querySelector('#taskTime').value;
 
-if(taskName && taskDate && taskTime){
-    const taskList = document.querySelector('#taskList');
+    if(taskName && taskDate && taskTime){
+        const taskList = document.querySelector('#taskList');
 
-    const taskItem = document.createElement('div');
-    taskItem.classList.add('task-item');
+        const taskItem = document.createElement('div');
+        taskItem.classList.add('task-item');
 
-    const dataInput = taskDate.split('-');
+        const dataInput = taskDate.split('-');
 
 
-    const dataFormatada = `${dataInput[2]}/${dataInput[1]}/${dataInput[0]}`;
+        const dataFormatada = `${dataInput[2]}/${dataInput[1]}/${dataInput[0]}`;
 
-    const taskHTML = `
-    <h3>${taskName}</h3>
-    <p>${taskDescription}</p>
-    <p><strong>Vencimento:</strong> ${dataFormatada} às ${taskTime}</p>
-        <div class="task-actions">
-            <button class="complete-btn">Concluir</button>
-            <button class="edit-btn">Editar</button>
-            <button class="delete-btn">Excluir</button>
-        </div>
-    `;
+        const taskHTML = `
+        <h3>${taskName}</h3>
+        <p>${taskDescription}</p>
+        <p><strong>Vencimento:</strong> ${dataFormatada} às ${taskTime}</p>
+            <div class="task-actions">
+                <button class="complete-btn">Concluir</button>
+                <button class="edit-btn">Editar</button>
+                <button class="delete-btn">Excluir</button>
+            </div>
+        `;
 
-    taskItem.innerHTML= taskHTML;
-    taskList.appendChild(taskItem);
+        taskItem.innerHTML= taskHTML;
+        taskList.appendChild(taskItem);
 
-    taskItem.querySelector('.complete-btn').addEventListener('click',function(){
-        marcarComoConcluida(this);
-    });
-    taskItem.querySelector('.edit-btn').addEventListener('click', function(){
-        editarTarefas(this);
-    });
-    taskItem.querySelector('.delete-btn').addEventListener('click', function(){
-        excluirTarefa(this);
-    })
+        taskItem.querySelector('.complete-btn').addEventListener('click',function(){
+            marcarComoConcluida(this);
+        });
+        taskItem.querySelector('.edit-btn').addEventListener('click', function(){
+            editarTarefas(this);
+        });
+        taskItem.querySelector('.delete-btn').addEventListener('click', function(){
+            excluirTarefa(this);
+        })
 
-    const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
-    tarefas.push({
-        nome:taskName,
-        descricao: taskDescription,
-        data: taskDate,
-        hora: taskTime,
-        html: taskHTML
-    });
+        const tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+        tarefas.push({
+            nome:taskName,
+            descricao: taskDescription,
+            data: taskDate,
+            hora: taskTime,
+            html: taskHTML
+        });
 
-    // Conversão do objeto para string
-    localStorage.setItem('tarefas',JSON.stringify(tarefas));
-    // Informação para o usuário
-    Swal.fire({
-        title: "Tarefa adicionada com sucesso!",
-        icon: "success",
-        draggable: true
-    });
-    // Limpar campos dos formulario
-    document.querySelector('#taskForm').reset();
+        // Conversão do objeto para string
+        localStorage.setItem('tarefas',JSON.stringify(tarefas));
+        // Informação para o usuário
+        Swal.fire({
+            title: "Tarefa adicionada com sucesso!",
+            icon: "success",
+            draggable: true
+        });
+        // Limpar campos dos formulario
+        document.querySelector('#taskForm').reset();
 
-}else{
-    Swal.fire({
-        title: "Por favor, preencha todos os campos obrigatórios!",
-        icon: "info",
-        draggable: true
-    });
-}
-}
+    }else{
+        Swal.fire({
+            title: "Por favor, preencha todos os campos obrigatórios!",
+            icon: "info",
+            draggable: true
+        });
+    }
+};
 
 window.onload = function(){
-definirSaudacao();
-carregarTarefas();
+    definirSaudacao();
+    carregarTarefas();
 
-// Adicionando event listeners para os botões
-document.querySelector('#adicionarTarefaBtn').addEventListener('click', function (e) {
-e.preventDefault();
-adicionarTarefa();
-});
+    // Adicionando event listeners para os botões
+    document.querySelector('#adicionarTarefaBtn').addEventListener('click', function (e) {
+    e.preventDefault();
+    adicionarTarefa();
+    });
 
-// Event listeners para os botões de filtro
-document.querySelector('#filtrarTodasBtn').addEventListener('click', function() {
-filtrarTarefas('todas');
-});
+    // Event listeners para os botões de filtro
+    document.querySelector('#filtrarTodasBtn').addEventListener('click', function() {
+    filtrarTarefas('todas');
+    });
 
-document.querySelector('#lixeiraBtn').addEventListener('click', function() {
-mostrarTarefasExcluidas();
-})
+    document.querySelector('#lixeiraBtn').addEventListener('click', function() {
+    mostrarTarefasExcluidas();
+    })
 
-document.querySelector('#filtrarPendentesBtn').addEventListener('click', function() {
-filtrarTarefas('pendentes');
-});
+    document.querySelector('#filtrarPendentesBtn').addEventListener('click', function() {
+    filtrarTarefas('pendentes');
+    });
 
-document.querySelector('#filtrarConcluidasBtn').addEventListener('click', function() {
-filtrarTarefas('concluidas');
-});
+    document.querySelector('#filtrarConcluidasBtn').addEventListener('click', function() {
+    filtrarTarefas('concluidas');
+    });
 
-// Event listeners para os botões de ordenação
-document.querySelector('#ordenarRecentesBtn').addEventListener('click', function() {
-ordenarTarefas('recentes');
-});
+    // Event listeners para os botões de ordenação
+    document.querySelector('#ordenarRecentesBtn').addEventListener('click', function() {
+    ordenarTarefas('recentes');
+    });
 
-document.querySelector('#ordenarAntigasBtn').addEventListener('click', function() {
-ordenarTarefas('antigas');
-});
+    document.querySelector('#ordenarAntigasBtn').addEventListener('click', function() {
+    ordenarTarefas('antigas');
+    });
 };
 
 const marcarComoConcluida = (button) => {
-const taskItem = button.closest('.task-item')
+    const taskItem = button.closest('.task-item')
 
-if (taskItem.classList.contains('concluida')){
-    Swal.fire({
-        title: "Esta tarefa já foi concluida!",
-        icon: "info",
-        draggable: true
-    });
-    return
-}
+    if (taskItem.classList.contains('concluida')){
+        Swal.fire({
+            title: "Esta tarefa já foi concluida!",
+            icon: "info",
+            draggable: true
+        });
+        return
+    }
 
-taskItem.classList.add('concluida')
+    taskItem.classList.add('concluida')
 
-const editBtn = taskItem.querySelector('.edit-btn');
-const deleteBtn = taskItem.querySelector('.delete-btn')
+    const editBtn = taskItem.querySelector('.edit-btn');
+    const deleteBtn = taskItem.querySelector('.delete-btn')
 
-editBtn.disabled=true
-deleteBtn.disabled=true
+    editBtn.disabled=true
+    deleteBtn.disabled=true
 
-const taskName = taskItem.querySelector('h3').textContent
-let tarefas = JSON.parse(localStorage.getItem('tarefas'))||[]
-const tarefaIndex = tarefas.findIndex (t => t.nome === taskName)
+    const taskName = taskItem.querySelector('h3').textContent
+    let tarefas = JSON.parse(localStorage.getItem('tarefas'))||[]
+    const tarefaIndex = tarefas.findIndex (t => t.nome === taskName)
 
-if (tarefaIndex !== -1){
-    tarefas [tarefaIndex].concluida = true
-    tarefas[tarefaIndex].html = taskItem.innerHTML
+    if (tarefaIndex !== -1){
+        tarefas [tarefaIndex].concluida = true
+        tarefas[tarefaIndex].html = taskItem.innerHTML
 
-    localStorage.setItem('tarefas', JSON.stringify(tarefas))
-}
+        localStorage.setItem('tarefas', JSON.stringify(tarefas))
+    }
 
-setTimeout(()=>{
-    Swal.fire({
-        title: "Tarefa marcada como concluída!",
-        icon: "success",
-        draggable: true
-    });
-}, 200)
-}
+    setTimeout(()=>{
+        Swal.fire({
+            title: "Tarefa marcada como concluída!",
+            icon: "success",
+            draggable: true
+        });
+    }, 200)
+};
 
 const editarTarefas = async (button) => {
     const taskItem = button.closest('.task-item');
@@ -420,31 +420,31 @@ const excluirTarefa = (button) => {
 // Funções para filtrar tarefas
 
 const filtrarTarefas = (filtro) => {
-const tarefas = document.querySelectorAll('.task-item')
-console.log(tarefas)
+    const tarefas = document.querySelectorAll('.task-item')
+    console.log(tarefas)
 
-tarefas.forEach(tarefa => {
-    switch(filtro){
-        case'todas':
-            tarefa.style.display = 'block';
+    tarefas.forEach(tarefa => {
+        switch(filtro){
+            case'todas':
+                tarefa.style.display = 'block';
 
-            break;
-    
-        case 'pendentes':
+                break;
+        
+            case 'pendentes':
 
-            tarefa.style.display = tarefa.classList.contains('concluida') ? 'none' : 'block'
+                tarefa.style.display = tarefa.classList.contains('concluida') ? 'none' : 'block'
 
-            break;
+                break;
 
-        case 'concluidas':
-            tarefa.style.display = tarefa.classList.contains('concluida') ? 'block' : 'none'
+            case 'concluidas':
+                tarefa.style.display = tarefa.classList.contains('concluida') ? 'block' : 'none'
 
-            break;
-        }
+                break;
+            }
 
 
-})
-}
+    });
+};
 
 // const ordenarTarefas = (ordem) => {
 
@@ -500,38 +500,38 @@ tarefas.forEach(tarefa => {
 
 
 const ordenarTarefas = (ordem) => {
-const taskList = document.querySelector('#taskList');
-const tarefas = Array.from(document.querySelectorAll('.task-item'));
-const dadosTarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+    const taskList = document.querySelector('#taskList');
+    const tarefas = Array.from(document.querySelectorAll('.task-item'));
+    const dadosTarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
 
-tarefas.sort((a, b) => {
-    const nomeA = a.querySelector('h3').textContent;
-    const nomeB = b.querySelector('h3').textContent;
+    tarefas.sort((a, b) => {
+        const nomeA = a.querySelector('h3').textContent;
+        const nomeB = b.querySelector('h3').textContent;
 
-    const tarefaA = dadosTarefas.find(t => t.nome === nomeA);
-    const tarefaB = dadosTarefas.find(t => t.nome === nomeB);
+        const tarefaA = dadosTarefas.find(t => t.nome === nomeA);
+        const tarefaB = dadosTarefas.find(t => t.nome === nomeB);
 
-    const dataA = new Date(`${tarefaA.data}T${tarefaA.hora}`);
-    const dataB = new Date(`${tarefaB.data}T${tarefaB.hora}`);
+        const dataA = new Date(`${tarefaA.data}T${tarefaA.hora}`);
+        const dataB = new Date(`${tarefaB.data}T${tarefaB.hora}`);
 
-    return ordem === 'antigas' ? dataA - dataB : dataB - dataA;
-});
+        return ordem === 'antigas' ? dataA - dataB : dataB - dataA;
+    });
 
-taskList.innerHTML = '<h2>Suas Tarefas</h2>';
-tarefas.forEach(tarefa => taskList.appendChild(tarefa));
+    taskList.innerHTML = '<h2>Suas Tarefas</h2>';
+    tarefas.forEach(tarefa => taskList.appendChild(tarefa));
 
 
-// 👉 Agora sim, atualiza o HTML
-// taskList.innerHTML = ''; // Limpa a lista
+    // 👉 Agora sim, atualiza o HTML
+    // taskList.innerHTML = ''; // Limpa a lista
 
-// tarefas.forEach(taskItem => {
-//     taskList.appendChild(taskItem); // Reinsere na nova ordem
+    // tarefas.forEach(taskItem => {
+    //     taskList.appendChild(taskItem); // Reinsere na nova ordem
 
-//     // Reatribui event listeners (opcional, se forem perdidos)
-//     taskItem.querySelector('.complete-btn').onclick = () => marcarComoConcluida(taskItem.querySelector('.complete-btn'));
-//     taskItem.querySelector('.edit-btn').onclick = () => editarTarefas(taskItem.querySelector('.edit-btn'));
-//     taskItem.querySelector('.delete-btn').onclick = () => excluirTarefa(taskItem.querySelector('.delete-btn'));
-// });
+    //     // Reatribui event listeners (opcional, se forem perdidos)
+    //     taskItem.querySelector('.complete-btn').onclick = () => marcarComoConcluida(taskItem.querySelector('.complete-btn'));
+    //     taskItem.querySelector('.edit-btn').onclick = () => editarTarefas(taskItem.querySelector('.edit-btn'));
+    //     taskItem.querySelector('.delete-btn').onclick = () => excluirTarefa(taskItem.querySelector('.delete-btn'));
+    // });
 };
 
 // document.querySelector('#ordenarRecentesBtn').addEventListener('click', function () {
