@@ -112,12 +112,20 @@ if(taskName && taskDate && taskTime){
     // Conversão do objeto para string
     localStorage.setItem('tarefas',JSON.stringify(tarefas));
     // Informação para o usuário
-    alert('Tarefa adicionada com sucesso!');
+    Swal.fire({
+        title: "Tarefa adicionada com sucesso!",
+        icon: "success",
+        draggable: true
+    });
     // Limpar campos dos formulario
     document.querySelector('#taskForm').reset();
 
 }else{
-    alert('Por favor, preencha todos os campos obrigatórios.');
+    Swal.fire({
+        title: "Por favor, preencha todos os campos obrigatórios!",
+        icon: "info",
+        draggable: true
+    });
 }
 }
 
@@ -135,6 +143,10 @@ adicionarTarefa();
 document.querySelector('#filtrarTodasBtn').addEventListener('click', function() {
 filtrarTarefas('todas');
 });
+
+document.querySelector('#lixeiraBtn').addEventListener('click', function() {
+mostrarTarefasExcluidas();
+})
 
 document.querySelector('#filtrarPendentesBtn').addEventListener('click', function() {
 filtrarTarefas('pendentes');
@@ -158,7 +170,11 @@ const marcarComoConcluida = (button) => {
 const taskItem = button.closest('.task-item')
 
 if (taskItem.classList.contains('concluida')){
-    alert('Esta tarefa já foi concluida!')
+    Swal.fire({
+        title: "Esta tarefa já foi concluida!",
+        icon: "info",
+        draggable: true
+    });
     return
 }
 
@@ -176,13 +192,17 @@ const tarefaIndex = tarefas.findIndex (t => t.nome === taskName)
 
 if (tarefaIndex !== -1){
     tarefas [tarefaIndex].concluida = true
-    tarefa[tarefaIndex].html = taskItem.innerHTML
+    tarefas[tarefaIndex].html = taskItem.innerHTML
 
     localStorage.setItem('tarefas', JSON.stringify(tarefas))
 }
 
 setTimeout(()=>{
-    alert('Tarefa marcada como concluída')
+    Swal.fire({
+        title: "Tarefa marcada como concluída!",
+        icon: "success",
+        draggable: true
+    });
 }, 200)
 }
 
@@ -197,40 +217,100 @@ const newDescription = prompt('Edite a descrição da tarefa: ', taskItem.queryS
 }
 
 const excluirTarefa = (button) => {
-    // Faço a confirmação de exclusão para o usuário
-    if (confirm('Deseja realmente excluir esta tarefa?')) {
-        // pego o elemento pai com a classe task-item
-        const taskItem = button.closest('.task-item');
-        // pego o valor do h3 dentro do elemento pai
-        const taskName = taskItem.querySelector('h3').textContent;
 
-        // pego o array de tarefas do localStorage
-        let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
-        // Pego o array de tarefas ecluídas de dentro do localStorage
-        let tarefasLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+    Swal.fire({
+        title: "Deseja realmente excluir esta tarefa?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sim, deletar"
+      }).then((result) => {
+        if (result.isConfirmed) {
 
-        // Encontro a tarefa que vai ser excluída
-        const tarefaIndex = tarefas.findIndex(t => t.nome === taskName);
+            // pego o elemento pai com a classe task-item
+            const taskItem = button.closest('.task-item');
+            // pego o valor do h3 dentro do elemento pai
+            const taskName = taskItem.querySelector('h3').textContent;
 
-        // se essa tarefa for encontrada
-        if (tarefaIndex !== -1) {
-            // Removo a tarefa da lista de tarefas incial
-            const tarefaExcluida = tarefas.splice(tarefaIndex, 1)[0];
+            // pego o array de tarefas do localStorage
+            let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+            // Pego o array de tarefas ecluídas de dentro do localStorage
+            let tarefasLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
 
-            // Coloco a tarefa que foi removida dentro da lista de tarefas excluídas
-            tarefasLixeira.push(tarefaExcluida);
+            // Encontro a tarefa que vai ser excluída
+            const tarefaIndex = tarefas.findIndex(t => t.nome === taskName);
 
-            // Atualiza o localStorage co as novas tarefas
-            localStorage.setItem('tarefas', JSON.stringify(tarefas));
-            localStorage.setItem('tarefasLixeira', JSON.stringify(tarefasLixeira));
+            // se essa tarefa for encontrada
+            if (tarefaIndex !== -1) {
+                // Removo a tarefa da lista de tarefas incial
+                const tarefaExcluida = tarefas.splice(tarefaIndex, 1)[0];
 
-            // atualizo a interface
-            taskItem.remove();
+                // Coloco a tarefa que foi removida dentro da lista de tarefas excluídas
+                tarefasLixeira.push(tarefaExcluida);
 
-            // retorno para o usuário
-            alert('Tarefa movida para a lixeira.');
+                // Atualiza o localStorage co as novas tarefas
+                localStorage.setItem('tarefas', JSON.stringify(tarefas));
+                localStorage.setItem('tarefasLixeira', JSON.stringify(tarefasLixeira));
+
+                // atualizo a interface
+                taskItem.remove();
+
+                // retorno para o usuário
+                Swal.fire({
+                    title: "Tarefa movida para a lixeira!",
+                    icon: "success",
+                    draggable: true
+                });
+            }
+
+
+          Swal.fire({
+            title: "Tarefa movida para a lixeira!",
+            icon: "success"
+          });
+
         }
-    }
+      });
+
+    // // Faço a confirmação de exclusão para o usuário
+    // if (confirm('Deseja realmente excluir esta tarefa?')) {
+    //     // pego o elemento pai com a classe task-item
+    //     const taskItem = button.closest('.task-item');
+    //     // pego o valor do h3 dentro do elemento pai
+    //     const taskName = taskItem.querySelector('h3').textContent;
+
+    //     // pego o array de tarefas do localStorage
+    //     let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+    //     // Pego o array de tarefas ecluídas de dentro do localStorage
+    //     let tarefasLixeira = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+
+    //     // Encontro a tarefa que vai ser excluída
+    //     const tarefaIndex = tarefas.findIndex(t => t.nome === taskName);
+
+    //     // se essa tarefa for encontrada
+    //     if (tarefaIndex !== -1) {
+    //         // Removo a tarefa da lista de tarefas incial
+    //         const tarefaExcluida = tarefas.splice(tarefaIndex, 1)[0];
+
+    //         // Coloco a tarefa que foi removida dentro da lista de tarefas excluídas
+    //         tarefasLixeira.push(tarefaExcluida);
+
+    //         // Atualiza o localStorage co as novas tarefas
+    //         localStorage.setItem('tarefas', JSON.stringify(tarefas));
+    //         localStorage.setItem('tarefasLixeira', JSON.stringify(tarefasLixeira));
+
+    //         // atualizo a interface
+    //         taskItem.remove();
+
+    //         // retorno para o usuário
+    //         Swal.fire({
+    //             title: "Tarefa movida para a lixeira!",
+    //             icon: "success",
+    //             draggable: true
+    //         });
+    //     }
+    // }
 };
 
 // const excluirTarefa = (button) =>{
@@ -377,11 +457,48 @@ tarefas.forEach(tarefa => taskList.appendChild(tarefa));
 //     ordenarTarefas('antigas');
 // });
 
+const mostrarTarefasExcluidas = () =>{
+    const tarefasExcluidas = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
 
-// const mostrarTarefasExcluidas = () =>{
+    const tarefasValidas = tarefasExcluidas.filter(tarefa => tarefa && tarefa.nome);
 
-// }
+    if(tarefasValidas.length === 0){
+        Swal.fire({
+            icon: "error",
+            title: "Não há tarefas na lixeira!"
+        });
+        return;
+    }
+
+    let mensagem = 'Tarefas na Lixeira:\n\n';
+
+    tarefasValidas.forEach((tarefa, index) =>{
+        mensagem += `${index + 1}. ${tarefa.nome}\n`
+    })
+
+    const resposta = prompt(mensagem + '\nDigite o número da tarefa que deseja restaurar (ou cancele para sair: ');
+
+    if(resposta && !isNaN(resposta)){
+        const index = parseInt(resposta) -1
+        if(index >= 0 && index < tarefasValidas.length){
+            restaurarTarefa(tarefasValidas[index]);
+        }else{
+            Swal.fire({
+                icon: "error",
+                title: "Número inválido!"
+            });
+        }
+    }
+}
 
 const restaurarTarefa = (tarefaExcluida) =>{
+    const tarefas = JSON.parse(localStorage.getItem('tarefa')) || [];
+    tarefas.push(tarefaExcluida);
+    localStorage.setItem('tarefas', JSON.stringify(tarefas));
 
+    let tarefasExcluidas = JSON.parse(localStorage.getItem('tarefasLixeira')) || [];
+    tarefasExcluidas = tarefasExcluidas.filter(t => t.nome !== tarefaExcluida.nome);
+    localStorage.setItem('tarefasLixeira', JSON.stringify(tarefasExcluidas));
+
+    location.reload();
 }
