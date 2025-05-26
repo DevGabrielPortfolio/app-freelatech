@@ -206,15 +206,100 @@ setTimeout(()=>{
 }, 200)
 }
 
-const editarTarefas = (button) => {
-const taskItem = button.closest('.task-item')
+const editarTarefas = async (button) => {
+    const taskItem = button.closest('.task-item');
+    const taskNameElement = taskItem.querySelector('h3');
+    const taskDescriptionElement = taskItem.querySelector('p:nth-of-type(1)'); // Pega a primeira tag <p>
+    const taskDueDateElement = taskItem.querySelector('p:nth-of-type(2)'); // Pega a segunda tag <p>
 
-const newName = prompt('Edite o nome da tarefa: ', taskItem.querySelector('h3').textContent())
-const newDescription = prompt('Edite a descrição da tarefa: ', taskItem.querySelector('p').textContent())
+    const currentName = taskNameElement.textContent;
 
+    // Extrair data e hora da string de vencimento (ex: "Vencimento: 01/01/2024 às 10:00")
+    const vencimentoText = taskDueDateElement.textContent;
+    const regex = /Vencimento: (\d{2}\/\d{2}\/\d{4}) às (\d{2}:\d{2})/;
+    const match = vencimentoText.match(regex);
 
+    let currentDescription = taskDescriptionElement.textContent;
+    let currentDate = '';
+    let currentTime = '';
 
-}
+    if (match) {
+        // Converte a data de DD/MM/YYYY para YYYY-MM-DD para o input type="date"
+        const [day, month, year] = match[1].split('/');
+        currentDate = `${year}-${month}-${day}`;
+        currentTime = match[2];
+    }
+
+    // Busca a tarefa original no localStorage para ter todos os dados
+    let tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+    const tarefaIndex = tarefas.findIndex(t => t.nome === currentName);
+
+    if (tarefaIndex === -1) {
+        Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: "Tarefa não encontrada para edição.",
+        });
+        return;
+    }
+
+    const tarefaOriginal = tarefas[tarefaIndex];
+
+    // Abre o SweetAlert2 para edição
+    const { value: formValues } = await Swal.fire({
+        title: 'Editar Tarefa',
+        html:
+            `<input id="swal-input1" class="swal2-input" placeholder="Nome da Tarefa" value="${tarefaOriginal.nome}">` +
+            `<textarea id="swal-input2" class="swal2-textarea" placeholder="Descrição">${tarefaOriginal.descricao}</textarea>` +
+            `<input id="swal-input3" class="swal2-input" type="date" value="${tarefaOriginal.data}">` +
+            `<input id="swal-input4" class="swal2-input" type="time" value="${tarefaOriginal.hora}">`,
+        focusConfirm: false,
+        preConfirm: () => {
+            const newName = document.getElementById('swal-input1').value;
+            const newDescription = document.getElementById('swal-input2').value;
+            const newDate = document.getElementById('swal-input3').value;
+            const newTime = document.getElementById('swal-input4').value;
+
+            if (!newName || !newDate || !newTime) {
+                Swal.showValidationMessage('Por favor, preencha todos os campos obrigatórios.');
+                return false; // Impede o fechamento do modal
+            }
+            return {
+                name: newName,
+                description: newDescription,
+                date: newDate,
+                time: newTime
+            };
+        }
+    });
+
+    if (formValues) {
+        const { name, description, date, time } = formValues;
+
+        // Atualiza os elementos HTML da tarefa
+        taskNameElement.textContent = name;
+        taskDescriptionElement.textContent = description;
+
+        const dataInput = date.split('-');
+        const dataFormatada = `${dataInput[2]}/${dataInput[1]}/${dataInput[0]}`;
+        taskDueDateElement.innerHTML = `<strong>Vencimento:</strong> ${dataFormatada} às ${time}`;
+
+        // Atualiza a tarefa no array e no localStorage
+        tarefas[tarefaIndex].nome = name;
+        tarefas[tarefaIndex].descricao = description;
+        tarefas[tarefaIndex].data = date;
+        tarefas[tarefaIndex].hora = time;
+        tarefas[tarefaIndex].html = taskItem.innerHTML; // Atualiza o HTML para persistência
+
+        localStorage.setItem('tarefas', JSON.stringify(tarefas));
+
+        Swal.fire({
+            title: "Tarefa editada com sucesso!",
+            icon: "success",
+            draggable: true
+        });
+    }
+};
 
 const excluirTarefa = (button) => {
 
